@@ -1,0 +1,139 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <style>
+        div{
+            border: 0px solid rgb(0, 0, 0);
+            height: 50px;
+        }
+        
+    </style>
+</head>
+<body class="container">
+    <div class="row" style="margin-top: 100px;">
+        <div class="col-sm-1"></div>
+
+        <div class="col-sm-2"><input id="v1" class="form-control" value="1" style="width: 100%;" onblur="updateValue2()"></div>
+        <div class="col-sm-2">
+            <select id="v1input" onchange="update()" class="form-control" style="width: 100%;"></select>
+        </div>
+
+        <div class="col-sm-2"><p style="text-align: center;">=</p></div>
+
+        <div class="col-sm-2"><input id="v2" class="form-control" value="" style="width: 100%;" onblur="updateValue1()"></div>
+        <div class="col-sm-2">
+            <select id="v2input" onchange="update2()" class="form-control" style="width: 100%;"></select>
+        </div>
+
+        <div class="col-sm-1"></div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+<script>
+    var v1 = document.getElementById("v1")
+    var v2 = document.getElementById("v2")
+    var v1input = document.getElementById("v1input")
+    var v2input = document.getElementById("v2input")
+
+    currentConvertionPrice = 0
+
+    var mainData = []
+    var Currencies = [
+        [ "BTC", [] ], [ "ETH", [] ], [ "ADA", [] ], [ "DOGE", [] ],
+    ]
+
+    function isListed(x){
+        for (let i = 0; i < Currencies.length; i++) {
+            if (x == Currencies[i][0]) {
+                return true
+            } 
+        }
+        return false
+    }
+
+    function listConvertions(x,y){
+        for (let i = 0; i < Currencies.length; i++) {
+            if (x == Currencies[i][0]) {
+                Currencies[i][1].push(y)
+            } 
+        }
+    }
+
+   
+
+
+    function convert(){
+        currency = v1input.value+"-"+v2input.value
+        if (v1input.value == v2input.value){
+            v2.value = v1.value
+        }else{
+            fetch('https://api.pro.coinbase.com/products/'+currency+"/ticker")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                v2.value = (data.price * parseFloat(v1.value))
+                currentConvertionPrice = data.price
+            });
+        }
+    }
+
+    function update(){
+        console.log(v1input.value)
+        v2input.innerHTML = ""
+        for (let i = 0; i < Currencies.length; i++) {
+            if (v1input.value == Currencies[i][0]) {
+                for (let j = 0; j <  Currencies[i][1].length; j++) {
+                    v2input.innerHTML += '<option value="'+Currencies[i][1][j]+'">'+Currencies[i][1][j]+'</option>'
+                }
+                
+            }
+        }
+        convert()
+    }
+    function update2(){
+        convert()
+    }
+
+
+    function updateValue1(){
+        if (!parseFloat(v2.value)) {
+            v2.value = 1
+        }
+        v1.value = parseFloat(v2.value) / currentConvertionPrice
+    }
+    function updateValue2(){
+        if (!parseFloat(v1.value)) {
+            v1.value = 1
+        }
+        v2.value = currentConvertionPrice * parseFloat(v1.value)
+    }
+
+     fetch('https://api.pro.coinbase.com/products/')
+        .then(response => response.json())
+        .then(data => {
+            mainData = data
+            console.log(data)
+            for (let i = 0; i < mainData.length; i++) {
+                if (!isListed(mainData[i].base_currency)) {
+                    Currencies.push([
+                        mainData[i].base_currency,
+                        []
+                    ]) 
+                }
+                listConvertions(mainData[i].base_currency,mainData[i].quote_currency)
+            }
+
+            console.log(Currencies)
+            for (let i = 0; i < Currencies.length; i++) {
+                v1input.innerHTML += '<option value="'+Currencies[i][0]+'">'+Currencies[i][0]+'</option>'
+            }
+            update()
+            updateValue2()
+        });
+
+</script>
+</html>
