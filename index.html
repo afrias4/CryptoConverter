@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Crypto Converter</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <style>
         div{
@@ -19,7 +19,7 @@
     <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="#" style="margin-left: 15px;">
           <img src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-          Nombre del proyecto
+          Crypto Converter
         </a>
     </nav>
     <div class="container">
@@ -46,7 +46,7 @@
             <div class="col-sm-1"></div>
             
         </div>
-        
+        <p>v 1.0</p>
         
     </div>
 </body>
@@ -150,7 +150,7 @@
 
             console.log(Currencies)
             for (let i = 0; i < Currencies.length; i++) {
-                v1input.innerHTML += '<option value="'+Currencies[i][0]+'">'+Currencies[i][0]+'</option>'
+                v1input.innerHTML += '<option value="'+Currencies[i][0]+'"><img src="https://cryptoicon-api.vercel.app/api/icon/'+Currencies[i][0]+'">'+Currencies[i][0]+'</option>'
             }
             update()
             updateValue2()
