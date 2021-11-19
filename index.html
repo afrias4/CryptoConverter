@@ -68,6 +68,7 @@
             border-radius: 5px;
             background-color:rgba(255, 255, 255, 0.85);
             z-index: 9;
+            position: relative;
         }
 
         .b2{
@@ -79,6 +80,7 @@
             border-radius: 5px;
             background-color:rgba(255, 255, 255, 0.85);
             z-index: 9;
+            position: relative
         }
 
         .open{
@@ -134,10 +136,17 @@
         </a>
     </nav>
     <div class="container" style="background-color:rgba(255, 255, 255, 0.85); height: 75%; border-radius: 30px;">
-        <div class="row" style="margin-top: 90px; border-radius: 5px; background-color: rgb(200, 200, 200);height: 25px;">
+        <div class="row" style="margin-top: 50px; border-radius: 5px; background-color: rgb(200, 200, 200);height: 25px;">
             <p id="info" style="text-align: center;vertical-align: middle;margin: 0;margin-top: 0px;"></p>
         </div>
-        <div class="row" style="margin-top: 10px; ">
+        <div class="row">
+            <div class="col-sm-1"><img src="" id="CurrentImage" style="width: 100%; display: none;" ></div>
+            <div class="col-sm-11"><h1 style="width: 100%;" id="CurrentName"></h1></div>
+            <!-- <div class="col-sm-7"></div> -->
+        </div>
+        
+        <div class="row" style="margin-top: 10px; margin-bottom: 50px;">
+            
             <div class="col-sm-1"></div>
             <div class="col-sm-2"><input id="v1" class="form-control" value="1" style="width: 100%;" onblur="updateValue2()"></div>
             <div class="col-sm-2">
@@ -167,12 +176,62 @@
             </div>
             <div class="col-sm-1"></div>
         </div>
+
+
+        <style>
+            .TimeButton{
+                width: 50px;
+                border-radius: 50px;
+                border-color: rgba(0,0,0,0);
+                background-color: rgb(48, 113, 151);
+                color: #fff;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .TBselected{
+                width: 50px;
+                border-radius: 50px;
+                border-color: rgba(0,0,0,0);
+                background-color: rgb(29, 70, 94);
+                color: #fff;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .HistoyChart{
+                border-radius: 50px;
+                background-color: #fff;
+            }
+        </style>
+        <div class="row HistoyChart" >
+            <div class="col-sm-8 TimeButtons">
+                <button class="TimeButton" onclick="GetPriceChart('24h')">24h</button>
+                <button class="TimeButton" onclick="GetPriceChart('7d')">7d</button>
+                <button class="TimeButton" onclick="GetPriceChart('1m')">1m</button>
+                <button class="TimeButton" onclick="GetPriceChart('3m')">3m</button>
+                <button class="TimeButton" onclick="GetPriceChart('6m')">6m</button>
+                <button class="TimeButton TBselected" onclick="GetPriceChart('1y')">1y</button>
+                <button class="TimeButton" onclick="GetPriceChart('All')">All</button>
+                <!-- <button class="TimeButton" style="width: 70px!important;">Custom</button> -->
+            </div>
+            <div class="col-sm-4"></div>
+            
+            <div class="row">
+                <div class="col-sm-8" >
+                    <canvas id="HystoryChart" width="400" height="200"></canvas>
+                </div>
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+
     </div>
     
     <p style="color: #fff;">v1.0</p>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+
+
+
+
 <script>
     var v1 = document.getElementById("v1")
     var v2 = document.getElementById("v2")
@@ -181,10 +240,20 @@
     var Input1 = document.getElementById("Input1")
     var Input2 = document.getElementById("Input2")
     var info = document.getElementById("info")
+    var CurrentImage = document.getElementById("CurrentImage")
+    var CurrentName = document.getElementById("CurrentName") 
     var currentConvertionPrice = 0
     var linked = false
 
     var currency = "BTC-USD"
+
+    let HystoryChart;
+
+    var CurrencyName = ""
+
+    var SymbolNames = [
+
+    ]
 
     var mainData = []
     var Currencies = [
@@ -208,7 +277,96 @@
         }
     }
 
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+
+    function GetPriceChart(timeSet){
+
+        var buttons = document.getElementsByClassName("TimeButton")
+        for (let i = 0; i < buttons.length; i++) {
+            const button = buttons[i];
+            console.log(buttons[i])
+            button.classList.remove("TBselected");
+
+            if (button.innerHTML == timeSet) {
+                button.classList.add("TBselected");
+            }
+        }
+
+        var timeToRest = 0
+        var now = Math.round(Date.now()/1000)
+
+        if (timeSet == "1y") {
+            timeToRest = 31536000
+        }else if (timeSet == "6m") {
+            timeToRest = 15768000
+        }else if (timeSet == "3m") {
+            timeToRest = 2628288*3
+        }else if (timeSet == "1m") {
+            timeToRest = 2628288
+        }else if (timeSet == "7d") {
+            timeToRest = 86400*7
+        }else if (timeSet == "24h") {
+            timeToRest = 86400
+        }else if (timeSet == "All") {
+            timeToRest = now
+        }
+
+        var fCurrency = Input2.value
+        if (fCurrency.toLocaleLowerCase() == "usdt" || fCurrency.toLocaleLowerCase() == "usdc" || fCurrency.toLocaleLowerCase() == "ust"){ fCurrency = "usd" }
+        fetch("https://api.coingecko.com/api/v3/coins/"+CurrencyName.toLocaleLowerCase()+"/market_chart/range?vs_currency="+fCurrency.toLocaleLowerCase()+"&from="+(now-timeToRest)+"&to="+now)
+        .then(response3 => response3.json())
+        .then(data3 => {
+            
+            document.getElementById('HystoryChart').innerHTML = ""
+            var Pdata = []
+            var Plabels = []
+
+            for (let i = 0; i < data3.prices.length; i++) {
+                Pdata.push(data3.prices[i][1])
+                var d = new Date(data3.prices[i][0]); d.getMonth()
+                if (timeSet == "24h"){
+                    Plabels.push((d.getHours()+1)+":"+d.getMinutes()+" - "+(d.getDate() + 1))
+                }else{
+                    Plabels.push((d.getDate()+1)+" "+monthNames[d.getMonth()]+" "+d.getFullYear())
+                }
+            }
+
+            var timeSetted = timeSet
+            const ctx = document.getElementById('HystoryChart').getContext('2d');
+            if (HystoryChart != null) {
+                HystoryChart.destroy();
+            }
+            HystoryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Plabels,
+                    datasets: [{
+                        label: timeSetted+' Price',
+                        data: Pdata,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(99, 99, 255, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                    }
+                }
+            });
+        });
+
+
+    }
+
     function convert(){
+        var cr1 = Input1.value
         currency = Input1.value+"-"+Input2.value
         console.log("currency: "+currency)
         if (Input1.value == Input2.value){
@@ -217,11 +375,23 @@
             fetch('https://api.pro.coinbase.com/products/'+currency+"/ticker")//
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                // console.log(data)
                 v2.value = (data.price * parseFloat(v1.value))
                 currentConvertionPrice = data.price
 
                 info.innerHTML = "<strong>Last trade: Ask:</strong> "+data.ask+" <strong>Bid:</strong> "+data.bid+" <strong>Size:</strong> "+data.size+" <strong>Volume:</strong> "+data.volume+" "+ v1input.value
+
+                fetch("https://api.exchange.coinbase.com/currencies/"+cr1)
+                .then(response2 => response2.json())
+                .then(data2 => {
+                    console.log(data2.name)
+                    CurrencyName = data2.name
+                    CurrentName.innerHTML = CurrencyName +" = "+currentConvertionPrice+" "+Input2.value
+                    CurrentImage.src = 'https://cryptoicon-api.vercel.app/api/icon/'+cr1.toLowerCase()
+                    CurrentImage.style.display = ''
+                    GetPriceChart("1y")
+
+                });
             });
         }
     }
@@ -385,10 +555,6 @@
             update()
             updateValue2()
         });
-
-
-
-        
 
 </script>
 </html>
