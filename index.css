@@ -1,0 +1,139 @@
+@charset "utf-8";
+    	body{
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+        }
+        div{
+            border: 0px solid rgb(0, 0, 0);
+            height: 50px;
+        }
+        nav{
+            background-color: #a0e8f5;
+        }
+        .vodiapicker{
+            display: none; 
+        }
+        .vodiapicker2{
+            display: none; 
+        }
+
+        #a{
+            padding-left: 0px;
+        }
+
+        #a2{
+            padding-left: 0px;
+        }
+
+        #a img,#a2 img, .btn-select img, .btn-select2 img{
+            width: 12px;
+        }
+
+        #a li, #a2 li{
+            list-style: none;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        #a li:hover, #a2 li:hover{
+            background-color: #F4F3F3;
+        }
+
+        #a li img, #a2 li img{
+            margin: 5px;
+        }
+
+        #a li span, #a2 li span, .btn-select li span{
+            margin-left: 30px;
+        }
+
+        .btn-select2 li span{
+            margin-left: 30px;
+        }
+        
+        .b{
+            display: none;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 6px 12px rgba(0,0,0,.175);
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 5px;
+            background-color:rgba(255, 255, 255, 0.85);
+            z-index: 9;
+            position: relative;
+        }
+
+        .b2{
+            display: none;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 6px 12px rgba(0,0,0,.175);
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 5px;
+            background-color:rgba(255, 255, 255, 0.85);
+            z-index: 9;
+            position: relative
+        }
+
+        .open{
+            display: show !important;
+        }
+
+        .btn-select{
+            margin-top: 10px;
+            width: 100%;
+            max-width: 350px;
+            height: 34px;
+            border-radius: 5px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .btn-select2{
+            margin-top: 10px;
+            width: 100%;
+            max-width: 350px;
+            height: 34px;
+            border-radius: 5px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .btn-select li, .btn-select2 li{
+            list-style: none;
+            float: left;
+            padding-bottom: 0px;
+        }
+
+        .btn-select:hover li, .btn-select2:hover li{
+            margin-left: 0px;
+        }
+
+        .btn-select:hover, .btn-select2:hover{
+            background-color: #F4F3F3;
+            border: 1px solid transparent;
+            box-shadow: inset 0 0px 0px 1px #ccc;
+        }
+
+        .btn-select:focus, .btn-select2:focus{
+            outline:none;
+		}/* CSS Document */
+		 .TimeButton{
+                width: 50px;
+                border-radius: 50px;
+                border-color: rgba(0,0,0,0);
+                background-color: rgb(48, 113, 151);
+                color: #fff;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .TBselected{
+                width: 50px;
+                border-radius: 50px;
+                border-color: rgba(0,0,0,0);
+                background-color: rgb(29, 70, 94);
+                color: #fff;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .HistoyChart{
+                border-radius: 50px;
+                background-color: #fff;
+            }
